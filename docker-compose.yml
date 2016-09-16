@@ -1,0 +1,22 @@
+version: '2'
+
+services:
+  application:
+    image: php:7-apache
+    working_dir: /var/www
+    entrypoint: /var/www/opt/docker/development/entrypoint
+    volumes:
+      - ./opt/apache2/development/apache2.conf:/etc/apache2/apache2.conf
+      - ./opt/apache2/development/virtual-host.conf:/etc/apache2/sites-enabled/000-default.conf
+      - ./:/var/www
+    ports:
+      - 10000:80
+    depends_on:
+        redis
+        neo4j
+
+  neo4j:
+    image: neo4j:latest
+
+  redis:
+    image: redis:3.2-alpine

@@ -1,0 +1,16 @@
+#!/bin/bash
+
+docker-php-ext-install pdo pdo_mysql
+
+# Ensure apache2 log directory exists
+mkdir -p /var/www/var/log/apache2
+
+# Run our deployment script
+./opt/deployment/development/deploy
+
+chown -R www-data:www-data logs
+service apache2 start
+
+# Tail logs
+## There has to be a better way to do this?
+tail -f var/log/*.log var/log/*/*.log var/log/*/*/*.log
