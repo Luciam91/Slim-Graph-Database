@@ -12,8 +12,8 @@ services:
     ports:
       - 10000:80
     depends_on:
-        redis
-        neo4j
+        - redis
+        - neo4j
 
   neo4j:
     image: neo4j:latest

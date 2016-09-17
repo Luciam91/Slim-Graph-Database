@@ -21,10 +21,10 @@ $app = new \Slim\App($settings);
 require __DIR__ . '/../config/' . getenv("SLIM_ENVIRONMENT") . '/dependencies.php';
 
 // Register middleware
-require __DIR__ . '/../src/middleware.php';
+require __DIR__ . '/../config/middleware.php';
 
 // Register routes
-require __DIR__ . '/../src/routes.php';
+require __DIR__ . '/../config/routes.php';
 
 // Run app
 $app->run();
