@@ -23,3 +23,18 @@ $app->post('/user/create', function ($request, $response, $args) {
 
     return $response->withJson([]);
 });
+
+$app->post('/user/{id}/friends', function ($request, $response, $args) {
+    $repository = $this->em->getRepository(\Application\Entity\Member::class);
+
+    $member = $repository->findOneBy('email', $args['id']);
+
+    $friend = $repository->findOneBy('email', $request->getParam('email'));
+
+    $member->addFriend($friend);
+
+    $this->em->persist($member);
+    $this->em->flush();
+
+    return $response->withJson([]);
+});

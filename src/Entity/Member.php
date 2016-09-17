@@ -2,6 +2,7 @@
 
 namespace Application\Entity;
 
+use Doctrine\Common\Collections\ArrayCollection;
 use GraphAware\Neo4j\OGM\Annotations as OGM;
 
 
@@ -31,6 +32,12 @@ class Member
     protected $surname;
 
     /**
+     * @OGM\Relationship(type="FRIENDS_WITH", direction="OUTGOING", targetEntity="Member", collection=true)
+     * @var ArrayCollection|Member[]
+     */
+    protected $friends;
+
+    /**
      * Member constructor.
      * @param $email
      * @param $forename
@@ -41,6 +48,7 @@ class Member
         $this->email = $email;
         $this->forename = $forename;
         $this->surname = $surname;
+        $this->friends = new ArrayCollection();
     }
 
 
@@ -74,5 +82,31 @@ class Member
     public function getSurname()
     {
         return $this->surname;
+    }
+
+    /**
+     * @return \Doctrine\Common\Collections\ArrayCollection|Member
+     */
+    public function getFriends()
+    {
+        return $this->friends;
+    }
+
+    /**
+     * @param Member $member
+     */
+    public function addFriend(Member $member)
+    {
+        if (!$this->friends->contains($member)) {
+            $this->friends->add($member);
+        }
+    }
+
+
+    public function removeFriend(Member $member)
+    {
+        if ($this->friends->contains($member)) {
+            $this->friends->removeElement($member);
+        }
     }
 }
