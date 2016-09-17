@@ -1,6 +1,8 @@
 <?php
 // DIC configuration
 
+use GraphAware\Neo4j\Client\ClientBuilder;
+
 $container = $app->getContainer();
 
 // view renderer
@@ -23,11 +25,28 @@ $container['logger'] = function ($c) {
 };
 
 
-$container['redis'] = function($c) {
+$container['redis'] = function ($c) {
     $settings = $c->get('settings')['redis'];
     $redis = new \Predis\Client(
         $settings['connection']
     );
 
     return $redis;
+};
+
+
+$container['em'] = function ($c) {
+    $settings = $c->get('settings')['neo4j'];
+    $connection = $settings['connection'];
+
+    return \GraphAware\Neo4j\OGM\EntityManager::create(
+        sprintf(
+            '%s://%s:%s@%s:%d',
+            $connection['protocol'],
+            $connection['username'],
+            $connection['password'],
+            $connection['host'],
+            $connection['port']
+        )
+    );
 };
