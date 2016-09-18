@@ -24,15 +24,40 @@ $app->post('/user/create', function ($request, $response, $args) {
     return $response->withJson([]);
 });
 
-$app->post('/user/{id}/friends', function ($request, $response, $args) {
+$app->post('/user/{email}/friends', function ($request, $response, $args) {
     $repository = $this->em->getRepository(\Application\Entity\Member::class);
 
-    $member = $repository->findOneBy('email', $args['id']);
+    $member = $repository->findOneBy('email', $args['email']);
 
     $friend = $repository->findOneBy('email', $request->getParam('email'));
 
-    $member->addFriend($friend);
+    $friendRequest = new \Application\Entity\FriendRequest($member, $friend);
 
+    $this->em->persist($friendRequest);
+    $this->em->flush();
+
+    return $response->withJson([]);
+});
+
+$app->get('/user/{email}/friends/accept/{id}', function ($request, $response, $args) {
+    $repository = $this->em->getRepository(\Application\Entity\FriendRequest::class);
+    $memberRepository = $this->em->getRepository(\Application\Entity\Member::class);
+
+    $friendRequest = $repository->findOneById((int)$args['id']);
+
+    $member = $memberRepository->findOneBy('email', $args['email']);
+
+    if ($friendRequest->getTo() !== $member || $friendRequest->getStatus() !== null) {
+        throw new \Symfony\Component\Finder\Exception\AccessDeniedException();
+    }
+
+    $member->addFriend($friendRequest->getFrom());
+    $friend = $friendRequest->getFrom();
+    $friend->addFriend($member);
+    $friendRequest->accept();
+
+    $this->em->persist($friendRequest);
+    $this->em->persist($friend);
     $this->em->persist($member);
     $this->em->flush();
 

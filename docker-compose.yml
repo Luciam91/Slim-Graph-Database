@@ -12,14 +12,16 @@ services:
     ports:
       - 10000:80
     depends_on:
-        - redis
-        - neo4j
+      - redis
+      - neo4j
 
   neo4j:
     image: neo4j:latest
     ports:
       - 7474:7474
       - 7687:7687
+    environment:
+      NEO4J_AUTH: neo4j/dummy
 
   redis:
     image: redis:3.2-alpine

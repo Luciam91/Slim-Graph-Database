@@ -49,6 +49,7 @@ class Member
         $this->forename = $forename;
         $this->surname = $surname;
         $this->friends = new ArrayCollection();
+        $this->friendRequests = new ArrayCollection();
     }
 
 
@@ -108,5 +109,13 @@ class Member
         if ($this->friends->contains($member)) {
             $this->friends->removeElement($member);
         }
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getFriendRequests()
+    {
+        return $this->friendRequests;
     }
 }
